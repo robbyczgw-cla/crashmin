@@ -73,6 +73,18 @@ pip install .   # from a clone
 crashmin --help
 ```
 
+## For coding agents
+
+Unix CLI. No MCP, no SDK, no daemon.
+
+```bash
+crashmin req.curl --status 500 --body-regex 'panic' --json --quiet -o min.curl
+```
+
+`--json` writes **one** object to stdout (`schema: 1`). `crashmin --schema` prints the schema. Exit `0` means use `.minimized.curl`. Anything else, read `.error_code`.
+
+Contract: [docs/agents.md](docs/agents.md) · [AGENTS.md](AGENTS.md)
+
 ## Safety — read this
 
 CrashMin **sends the request many times**. It will mutate whatever you point it at.

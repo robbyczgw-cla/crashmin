@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/robbyczgw-cla/crashmin/docs/result.schema.json",
+  "title": "CrashMin result",
+  "type": "object",
+  "required": [
+    "ok",
+    "version",
+    "schema",
+    "exit"
+  ],
+  "properties": {
+    "ok": {
+      "type": "boolean"
+    },
+    "version": {
+      "type": "string"
+    },
+    "schema": {
+      "type": "integer",
+      "const": 1
+    },
+    "exit": {
+      "type": "integer"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "usage",
+        "parse",
+        "not_interesting",
+        "safety",
+        "aborted",
+        "confirm_failed"
+      ]
+    },
+    "parse_only": {
+      "type": "boolean"
+    },
+    "oracle": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "original": {
+      "type": "object"
+    },
+    "minimized": {
+      "type": "object"
+    },
+    "reduction": {
+      "type": "object"
+    },
+    "confirmation": {
+      "type": "object"
+    },
+    "search": {
+      "type": "object"
+    },
+    "aborted": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

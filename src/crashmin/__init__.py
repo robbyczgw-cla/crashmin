@@ -3,6 +3,8 @@
 from crashmin.models import HttpRequest, HttpResponse
 from crashmin.oracle import Oracle
 from crashmin.reduce import ReductionResult, reduce_request
+from crashmin.report import decide_exit, result_report
+from crashmin.version import __version__
 
 __all__ = [
     "HttpRequest",
@@ -10,7 +12,7 @@ __all__ = [
     "Oracle",
     "ReductionResult",
     "reduce_request",
+    "decide_exit",
+    "result_report",
     "__version__",
 ]
-
-__version__ = "0.1.0"
