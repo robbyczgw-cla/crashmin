@@ -35,8 +35,8 @@ to every hop on the way. Default is loopback. See [safety.md](safety.md).
 Do not `git push --mirror` or push `refs/t3/**`. Those are local tool
 checkpoints and must stay on the machine that created them.
 
-Commit author in this project is `CrashMin <crashmin@local>` on purpose.
-Do not rewrite history to a personal inbox.
+Commits are attributed to the GitHub account that owns the repo, using
+GitHub's `noreply` address so a private inbox is not in the history.
 
 ## License vs privacy
 
