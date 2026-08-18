@@ -11,6 +11,9 @@ bench:
 corpus:
 	$(PYTHON) scripts/corpus.py
 
+gif:
+	$(PYTHON) scripts/record_demo.py
+
 demo:
 	bash scripts/demo.sh
 

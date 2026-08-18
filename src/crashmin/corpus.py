@@ -239,6 +239,137 @@ def graphqlish_c_request(base_url: str) -> HttpRequest:
     return req
 
 
+def anonymized_saas_request(base_url: str) -> HttpRequest:
+    """Chrome 128 Copy as cURL, anonymized, aimed at fixture A.
+
+    Header names, order, and cookie *names* match a real DevTools copy of a
+    workspace-settings save. Hosts, tokens, emails, and IDs are replacements.
+    The crash needle is the same as fixture A so the report is deterministic.
+    """
+    req = HttpRequest(method="POST")
+    req.set_url(
+        base_url.rstrip("/")
+        + "/a?workspace=ws_7f3c&view=settings&tab=members&ref=sidebar"
+        + "&utm_source=inapp&utm_medium=save&utm_campaign=workspace-q3"
+        + "&cid=anon-11111111-2222-3333-4444-555555555555"
+    )
+    # Chrome copies header names in lowercase.
+    req.headers = [
+        ("accept", "application/json, text/plain, */*"),
+        ("accept-language", "en-GB,en-US;q=0.9,en;q=0.8"),
+        ("authorization", "Bearer anonymized-session-token"),
+        ("content-type", "application/json"),
+        ("origin", "https://app.example.invalid"),
+        ("priority", "u=1, i"),
+        ("referer", "https://app.example.invalid/settings/workspace?tab=members"),
+        ("sec-ch-ua", '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"'),
+        ("sec-ch-ua-mobile", "?0"),
+        ("sec-ch-ua-platform", '"Linux"'),
+        ("sec-fetch-dest", "empty"),
+        ("sec-fetch-mode", "cors"),
+        ("sec-fetch-site", "same-origin"),
+        ("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"),
+        ("x-crash-token", "letmein"),
+        ("x-org-id", "org_anon_0001"),
+        ("x-request-id", "req_anon_7f3c2a91e10b4d44"),
+    ]
+    req.cookies = [
+        ("session", "sAnon.replaced"),
+        ("__Host-next-auth.csrf-token", "anon-csrf"),
+        ("ajs_anonymous_id", "anon-1111-2222-3333"),
+        ("ajs_user_id", "usr_anon_42"),
+        ("_ga", "GA1.2.1000000000.1700000000"),
+        ("_gid", "GA1.2.2000000000.1700000000"),
+        ("_fbp", "fb.1.1700000000.1000000000"),
+        ("hubspotutk", "hs-anonymized"),
+        ("intercom-session", "ic-anonymized"),
+        ("mp_mixpanel", "mp-anonymized"),
+        ("__stripe_mid", "mid_anonymized"),
+        ("__stripe_sid", "sid_anonymized"),
+        ("_clck", "clarity-anon"),
+        ("_clsk", "clarity-anon-2"),
+        ("GCLB", "affinity-anon"),
+        ("locale", "en-GB"),
+        ("theme", "system"),
+    ]
+    members = [
+        {
+            "id": f"usr_{i:04d}",
+            "email": f"member{i}@example.invalid",
+            "role": "member" if i else "admin",
+            "lastSeen": "2026-08-01T12:00:00.000Z",
+            "prefs": {"digest": True, "theme": "dark"},
+        }
+        for i in range(24)
+    ]
+    req.json_body = {
+        "client": {
+            "name": "web",
+            "release": "2026.8.12-a1b2c3d",
+            "buildId": "Kz9f1anonymized",
+            "locale": "en-GB",
+        },
+        "workspace": {
+            "id": "ws_7f3c",
+            "name": "Example Workspace",
+            "plan": "business",
+            "region": "eu-west-1",
+            "flags": {f"ff_{i:02d}": bool(i % 3) for i in range(18)},
+        },
+        "members": members,
+        "audit": {
+            "actor": "usr_0000",
+            "reason": "settings.save",
+            "ip": "203.0.113.88",
+        },
+        "payload": {
+            "unused": True,
+            "draft": {"title": "workspace settings", "dirty": True},
+            "deeply": {
+                "ignored": "yes",
+                "nested": {
+                    "comment": "replaced field; original key name retained",
+                    "trigger": "boom",
+                    "extra": {"k": 1, "note": "padding"},
+                },
+            },
+        },
+        "ui": {
+            "sidebar": "collapsed",
+            "density": "comfy",
+            "whatsNew": list(range(12)),
+        },
+        "activity": [
+            {
+                "id": f"evt_{i:04d}",
+                "type": "member.invited" if i % 2 == 0 else "setting.changed",
+                "actor": f"usr_{i % 8:04d}",
+                "at": "2026-08-01T12:00:00.000Z",
+                "meta": {"source": "web", "pad": "x" * 40},
+            }
+            for i in range(40)
+        ],
+    }
+    req.refresh_body_from_structure()
+    return req
+
+
+def emit_chrome_devtools(req: HttpRequest) -> str:
+    """Match Chrome DevTools 'Copy as cURL (bash)': lowercase names, --data-raw."""
+    lines = [f"curl {_sq(req.url())} \\"]
+    for name, value in req.headers:
+        if name.lower() in {"content-length", "host"}:
+            continue
+        lines.append(f"  -H {_sq(f'{name}: {value}')} \\")
+    if req.cookies:
+        lines.append(f"  -H {_sq('cookie: ' + format_cookie_header(req.cookies))} \\")
+    if req.body is not None:
+        lines.append(f"  --data-raw {_sq(req.body.decode('utf-8'))}")
+    else:
+        lines[-1] = lines[-1].rstrip(" \\")
+    return "\n".join(lines) + "\n"
+
+
 def fat_f_request(base_url: str) -> HttpRequest:
     """A GET that looks like an authenticated app page: 20 cookies, 15 query params."""
     req = fixture_f_request(base_url)
@@ -291,6 +422,15 @@ CASES: list[CorpusCase] = [
     CorpusCase("e-chrome", "chrome-bash", "E", fixture_e_request, emit_chrome, _oracle_e, "curl", confirm=3),
     CorpusCase("f-chrome", "chrome-bash", "F", fat_f_request, emit_chrome, _oracle_f, "curl", expect_structure_wins=False),
     CorpusCase("f-windows", "chrome-cmd", "F", fat_f_request, emit_windows, _oracle_f, "curl", expect_structure_wins=False),
+    CorpusCase(
+        "anonymized-chrome-saas",
+        "chrome-devtools",
+        "A",
+        anonymized_saas_request,
+        emit_chrome_devtools,
+        _oracle_a,
+        "curl",
+    ),
 ]
 
 

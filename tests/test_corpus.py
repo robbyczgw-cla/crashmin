@@ -44,7 +44,7 @@ def test_every_dialect_parses(case, fixture_server):
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "name",
-    ["a-chrome", "a-firefox", "a-windows", "a-http", "a-har", "b-nextjs", "c-graphql", "f-windows"],
+    ["a-chrome", "a-firefox", "a-windows", "a-http", "a-har", "b-nextjs", "c-graphql", "f-windows", "anonymized-chrome-saas"],
 )
 def test_corpus_reduces_to_needle(name, fixture_server):
     case = next(c for c in CASES if c.name == name)

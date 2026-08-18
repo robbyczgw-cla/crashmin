@@ -1,0 +1,5 @@
+12,441 bytes -> 117 bytes
+1053 components -> 6
+99.06% reduction
+same failure: YES (20/20)
+curl -H 'x-crash-token: letmein' -d '{"payload":{"deeply":{"nested":{"trigger":"boom"}}}}' 'http://127.0.0.1:18765/a'

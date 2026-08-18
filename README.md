@@ -2,22 +2,24 @@
 
 **Failure-preserving HTTP request reduction.**
 
-Paste a grotesque `Copy as cURL`. Say what “still broken” means. Get back a tiny, readable request that still reproduces *your* failure.
+Paste a grotesque Chrome `Copy as cURL`. Say what “still broken” means. Get back a tiny request that still reproduces *your* failure.
+
+![CrashMin reducing an anonymized Chrome Copy as cURL from 12,441 bytes to 117 bytes](docs/demo.gif)
 
 ```
-15,615 bytes  →  117 bytes
-964 pieces    →  6
-99.25% smaller
-same panic    →  YES (20/20)
+12,441 bytes   →   117 bytes
+1,053 pieces   →   6
+99.06% smaller
+same panic     →   YES (20/20)
 ```
 
 ```bash
-# before: 15 KB of cookies, UTMs, and JSON noise
-# after:
-curl -H 'X-Crash-Token: letmein' \
+curl -H 'x-crash-token: letmein' \
   -d '{"payload":{"deeply":{"nested":{"trigger":"boom"}}}}' \
   'http://127.0.0.1:18765/a'
 ```
+
+That GIF is the product. Everything else is how to run it.
 
 This is **not** a formatter and **not** a “make the response look the same” minimizer.
 
@@ -25,11 +27,38 @@ This is **not** a formatter and **not** a “make the response look the same” 
 | --- | --- |
 | Is the response still *identical*? | Is it still *broken the way I said*? |
 
-A 500 page that changes wording when you drop `User-Agent` is still the crash. Equivalence tools keep the header. CrashMin deletes it.
-
 License: **MIT**.
 
 ---
+
+## A real Chrome copy (anonymized)
+
+[`corpus/repros/anonymized-chrome-saas.curl`](corpus/repros/anonymized-chrome-saas.curl) is a **Chrome 128 DevTools → Copy as cURL (bash)** of a workspace-settings save:
+
+- lowercase header names, `priority`, `sec-ch-ua`, `--data-raw`
+- next-auth / Stripe / Intercom / GA cookie *names*
+- 24 members, feature flags, activity log
+
+Hosts, bearer, emails, and IDs were replaced before it entered git. Replay is loopback-only so the crash is deterministic. How it was scrubbed: [corpus/ANONYMIZATION.md](corpus/ANONYMIZATION.md).
+
+| | Bytes | What remains |
+| --- | ---: | --- |
+| Chrome copy, as pasted | **12,441** | 17 cookies, UTMs, 24 members, flags, activity |
+| Header/cookie/query deletion only | 11,069 | almost the entire JSON body |
+| **CrashMin** | **117** | one header + `payload.deeply.nested.trigger` |
+
+Header strippers cannot see a nested JSON field. That leftover ~11 KB is the wedge.
+
+```bash
+python3 -m crashmin.fixtures --port 18765 &
+python3 -m crashmin corpus/repros/anonymized-chrome-saas.curl \
+  --status 500 \
+  --body-regex 'panic: nil pointer' \
+  --final-confirm 20 \
+  --compact
+```
+
+Or the packaged walkthrough: `bash scripts/demo.sh`.
 
 ## Install
 
@@ -39,20 +68,10 @@ Python 3.10+, no runtime dependencies.
 pip install git+https://github.com/robbyczgw-cla/crashmin.git
 ```
 
-From a clone:
-
 ```bash
-pip install .
+pip install .   # from a clone
 crashmin --help
 ```
-
-## 30-second demo (local only)
-
-```bash
-bash scripts/demo.sh
-```
-
-That starts a broken toy server on loopback, feeds it a 15 KB fake “Copy as cURL”, and prints the 117-byte repro. Nothing leaves `127.0.0.1`.
 
 ## Safety — read this
 
@@ -64,7 +83,7 @@ CrashMin **sends the request many times**. It will mutate whatever you point it 
 - Use `--confirm N` on flaky or non-idempotent endpoints.
 - A `Copy as cURL` is a session dump. Do not commit one, do not paste one into an issue.
 
-Details: [docs/safety.md](docs/safety.md) · [docs/privacy.md](docs/privacy.md).
+[docs/safety.md](docs/safety.md) · [docs/privacy.md](docs/privacy.md).
 
 ## Usage
 
@@ -75,7 +94,7 @@ crashmin capture.har  --body-contains 'INTERNAL ERROR'
 crashmin request.curl --oracle ./interesting.sh --confirm 5
 ```
 
-Input is auto-detected: a `curl …` command, a raw HTTP request, or a HAR (first entry, or `--har-index N`).
+Input is auto-detected: `curl …`, raw HTTP, or HAR (first entry, or `--har-index N`).
 
 Minimized request → **stdout**. Scoreboard → **stderr**.
 
@@ -107,27 +126,19 @@ headers → cookies → query → form fields → nested JSON → primitives →
 
 `Host` and `Content-Length` are rebuilt on the way out.
 
-v0.1 does **not** shrink multipart or mystery content types. Opaque bodies stay readable rather than becoming junk.
+v0.1 does **not** shrink multipart or mystery content types.
 
 ## When this is worth it
 
-Worth it when the crash lives in **JSON shape** (nested key, two fields only together, one array item) and the paste is huge.
+Worth it when the crash lives in **JSON shape** and the paste is huge.
 
 Not worth it when the bug is “needs `Authorization`” — delete that header by hand, or use [curlmin](https://github.com/noperator/curlmin).
-
-On our dialect corpus (Chrome / Firefox / Windows / HAR / raw HTTP), structured reduction beat header-only deletion on every JSON crash, and *tied* on the cookie+query crash — which is correct.
-
-| Fixture A | Structured | Headers only |
-| --- | ---: | ---: |
-| 15,615 byte curl | **117** | 12,836 |
-
-That leftover ~13 KB is the JSON. Header strippers cannot see it.
 
 [corpus/REPORT.md](corpus/REPORT.md) · [docs/competition.md](docs/competition.md)
 
 ## Not this project
 
-CrashMin is a reducer. It is not a Burp/Postman replacement, proxy, scanner, fuzzer, dashboard, or cloud service.
+Not a Burp/Postman replacement, proxy, scanner, fuzzer, dashboard, or cloud service. A reducer.
 
 ## Library
 
@@ -148,14 +159,13 @@ print("\n".join(result.summary_lines()))
 ```bash
 pip install -e '.[dev]'
 pytest -q
-python scripts/bench.py     # benchmarks/report.md
-python scripts/corpus.py    # corpus/REPORT.md
+python scripts/bench.py        # benchmarks/report.md
+python scripts/corpus.py       # corpus/REPORT.md
+python scripts/record_demo.py  # docs/demo.gif (needs Pillow + ffmpeg)
 ```
 
-Toy crash servers live on loopback only: `python3 -m crashmin.fixtures --port 18765` (`POST /a`–`/e`, `GET /f`).
+Toy crash servers: `python3 -m crashmin.fixtures --port 18765` (`POST /a`–`/e`, `GET /f`).
 
 ## License
 
 [MIT](LICENSE). Use it, fork it, vendor it. Keep the copyright notice.
-
-Why MIT and not GPL or Apache: this is a small CLI people should paste into a debugging toolkit without a license argument. No patents, no copyleft. The risk is sending requests at the wrong host — that is a safety default, not a license problem.
