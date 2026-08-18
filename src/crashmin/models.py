@@ -147,6 +147,16 @@ class HttpRequest:
         query = urlencode(self.query, doseq=True)
         return urlunsplit((self.scheme, self.netloc(), self.path or "/", query, ""))
 
+    def log_target(self) -> str:
+        """Host + path only. Never query values, cookies, or tokens."""
+        extra = []
+        if self.query:
+            extra.append(f"{len(self.query)} query")
+        if self.cookies:
+            extra.append(f"{len(self.cookies)} cookies")
+        suffix = f" ({', '.join(extra)})" if extra else ""
+        return f"{self.scheme}://{self.netloc()}{self.path or '/'}{suffix}"
+
     def set_url(self, url: str) -> None:
         parsed = urlsplit(url)
         if parsed.scheme:

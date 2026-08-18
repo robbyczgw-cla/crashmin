@@ -33,6 +33,8 @@ crashmin staging.curl --status 500 --allow-remote
 4. Set `--timeout` and `--max-requests` so a wedged server cannot become an accidental flood.
 5. Never paste a session cookie for a production account into a reducer and aim it at production.
 
+Privacy (what must not leave your machine) is in [privacy.md](privacy.md).
+
 The README repeats this because people will not open this file.
 
 ## Why this is not optional

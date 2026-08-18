@@ -62,8 +62,9 @@ CrashMin **sends the request many times**. It will mutate whatever you point it 
 - Use a local or staging target. **Never production.**
 - `--allow-remote` means you accept the blast radius.
 - Use `--confirm N` on flaky or non-idempotent endpoints.
+- A `Copy as cURL` is a session dump. Do not commit one, do not paste one into an issue.
 
-Details: [docs/safety.md](docs/safety.md).
+Details: [docs/safety.md](docs/safety.md) · [docs/privacy.md](docs/privacy.md).
 
 ## Usage
 

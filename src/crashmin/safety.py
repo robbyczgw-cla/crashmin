@@ -68,7 +68,7 @@ def check_target(req: HttpRequest, allow_remote: bool = False) -> None:
     if allow_remote:
         return
     raise SafetyError(
-        f"refusing to send {req.method.upper()} {req.url()} "
+        f"refusing to send {req.method.upper()} {req.log_target()} "
         f"({kind} target). CrashMin will mutate the remote system while it "
         f"reduces. Re-run against a local or staging server, or pass "
         f"--allow-remote if you really mean it."

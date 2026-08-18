@@ -17,3 +17,6 @@ htmlcov/
 benchmarks/_last.json
 corpus/_last.json
 examples/killer.curl
+# never commit a real capture
+*.real.curl
+captures/

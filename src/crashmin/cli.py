@@ -154,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"crashmin: warning: {warn}", file=sys.stderr)
         print(
             f"crashmin: parsed {req.compact_curl_size():,} byte request "
-            f"({req.component_count()} components) -> {req.method} {req.url()}",
+            f"({req.component_count()} components) -> {req.method} {req.log_target()}",
             file=sys.stderr,
         )
         print(f"crashmin: oracle: {', '.join(oracle.describe())}", file=sys.stderr)
@@ -202,7 +202,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _print_parse_summary(req) -> None:
     print(
-        f"crashmin: {req.method} {req.url()} "
+        f"crashmin: {req.method} {req.log_target()} "
         f"headers={len(req.headers)} cookies={len(req.cookies)} "
         f"query={len(req.query)} body={len(req.body or b'')} "
         f"components={req.component_count()} bytes={req.compact_curl_size()}",

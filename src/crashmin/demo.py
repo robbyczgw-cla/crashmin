@@ -30,7 +30,7 @@ NOISE_HEADERS = [
     ("X-Forwarded-For", "203.0.113.88"),
     ("X-Request-ID", "req-7f3c2a91-e10b-4d44-9b0e-2c8f11aa0001"),
     ("X-CSRF-Token", "csrf-not-the-crash-token-aaaaaaaaaaaaaaaa"),
-    ("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.notarealtoken"),
+    ("Authorization", "Bearer not-a-real-jwt"),
     ("Content-Type", "application/json"),
 ]
 
@@ -105,8 +105,8 @@ def _noise_json() -> dict:
         },
         "user": {
             "id": 999,
-            "name": "Ada Lovelace",
-            "email": "ada@example.invalid",
+            "name": "Pat Example",
+            "email": "pat@example.invalid",
             "prefs": {"theme": "dark", "digest": True, "locale": "en"},
         },
         "users": users,
