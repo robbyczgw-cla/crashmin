@@ -38,8 +38,10 @@ crashmin = "crashmin.cli:main"
 crashmin-fixtures = "crashmin.fixtures:main"
 
 [project.urls]
-Homepage = "https://github.com/crashmin/crashmin"
-Documentation = "https://github.com/crashmin/crashmin#readme"
+Homepage = "https://github.com/robbyczgw-cla/crashmin"
+Documentation = "https://github.com/robbyczgw-cla/crashmin#readme"
+Repository = "https://github.com/robbyczgw-cla/crashmin"
+Issues = "https://github.com/robbyczgw-cla/crashmin/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
