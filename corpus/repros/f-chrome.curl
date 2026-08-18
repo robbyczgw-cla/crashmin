@@ -1,0 +1,6 @@
+curl 'http://127.0.0.1:18765/f?need=1&utm_source=x&utm_medium=y&page=3&q=search&debug=1&utm_campaign=q3-launch&utm_content=banner&gclid=CjwKCAjwEEEEEEEEEEEEEEEE&fbclid=IwARFFFFFFFFFFFFFFFF&ref=email&src=legacy-redirect&hl=de&feature=new-nav&cb=184712' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' \
+  -H 'Accept: text/html,application/xhtml+xml' \
+  -H 'Referer: https://app.example.invalid/inbox?view=all' \
+  -H 'Cookie: session=s3cret; _ga=GA1.2.1; _gid=GA1.2.2; theme=light; locale=en; sid_extra=nope; intercom-session=ic-aaaaaaaaaaaaaaaaaaaaaaaa; ajs_user_id=usr_9911; ajs_anonymous_id=anon-deadbeef; _hp2_id=heap-bbbbbbbbbbbbbbbb; __stripe_mid=mid_cccccccccccccccccccc; __stripe_sid=sid_dddddddddddddddddddd; csrftoken=not-this; messages=flash.none; sidebar=open; density=comfy; ab=exp42-control; _clck=clarity-xxxx; _clsk=clarity-yyyy; GCLB=load-balancer-affinity' \
+  --compressed

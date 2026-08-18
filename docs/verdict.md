@@ -34,4 +34,9 @@ CrashMin is a real, tested, loopback-only CLI that takes a grotesque HTTP reques
 - Evidence that most "real" crashes collapse after deleting three headers and never need JSON structure. Our fixtures show the opposite for the bugs we claim to own; a corpus of production curls would be the honest follow-up.
 - If users cannot keep a staging target and keep pointing this at production despite the default deny.
 
+Corpus hunt (13 dialect repros, 17 August 2026): structured reduction beat
+header/query-only deletion on every JSON crash (A–D, including Next.js- and
+GraphQL-shaped envelopes). On the cookie+query crash (F) both strategies tied,
+which is what should happen. See `corpus/REPORT.md`.
+
 Until then: **ship it, keep it small, do not grow a proxy.**

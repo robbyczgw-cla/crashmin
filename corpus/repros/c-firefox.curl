@@ -1,0 +1,3 @@
+curl 'http://127.0.0.1:18765/c' \
+  -H 'Content-Type: application/json' \
+  --data-raw $'{\n  "items": [\n    {\n      "kind": "ok",\n      "n": 1\n    },\n    {\n      "kind": "ok",\n      "n": 2,\n      "pad": "xxxx"\n    },\n    {\n      "kind": "evil",\n      "n": 3,\n      "pad": "yyyy",\n      "meta": {\n        "a": 1\n      }\n    },\n    {\n      "kind": "ok",\n      "n": 4\n    },\n    {\n      "kind": "ok",\n      "n": 5\n    }\n  ],\n  "extra": true\n}'

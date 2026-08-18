@@ -1,0 +1,7 @@
+curl 'http://127.0.0.1:18765/e' \
+  -H 'X-Flaky-Key: yes' \
+  -H 'X-Sometimes: 1' \
+  -H 'X-Noise: aaaaaaaa' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"pad":1}' \
+  --compressed

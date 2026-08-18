@@ -1,0 +1,4 @@
+curl 'http://127.0.0.1:18765/b' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"alpha":"one","beta":"two","gamma":"three","delta":{"nested":true,"n":9},"epsilon":[1,2,3],"zeta":"noise"}' \
+  --compressed

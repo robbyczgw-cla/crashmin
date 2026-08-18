@@ -147,7 +147,20 @@ python3 -m crashmin examples/killer.curl \
 
 Or: `bash scripts/demo.sh`.
 
-The original is deliberately huge: tracking headers, a dozen cookies, UTM spam, a JSON blob with users/flags/events, and **one** real trigger:
+## Corpus hunt
+
+13 repros that look like Chrome, Firefox, Windows cmd, raw HTTP, and HAR — including a Next.js-shaped POST and a GraphQL envelope. Replayed only against loopback fixtures. Compared to **surface** deletion (headers + cookies + query, i.e. curlmin depth):
+
+| | Structured wins | Tie |
+| --- | ---: | ---: |
+| JSON crashes (A–D) | 10/10 | 0 |
+| Cookie/query crash (F) | 0 | 2 (expected) |
+
+Fixture A: 15,615 → 117 structured vs **12,836** if you only strip headers. That is the wedge.
+
+`python3 scripts/corpus.py` refreshes [`corpus/REPORT.md`](corpus/REPORT.md).
+
+The killer-demo original is deliberately huge: tracking headers, a dozen cookies, UTM spam, a JSON blob with users/flags/events, and **one** real trigger:
 
 - header `X-Crash-Token: letmein`
 - JSON `payload.deeply.nested.trigger == "boom"`

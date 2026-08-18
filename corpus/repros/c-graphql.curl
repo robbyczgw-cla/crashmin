@@ -1,0 +1,6 @@
+curl 'http://127.0.0.1:18765/c' \
+  -H 'Content-Type: application/json' \
+  -H 'Apollo-Require-Preflight: true' \
+  -H 'X-APOLLO-OPERATION-NAME: UpdateItems' \
+  --data-raw '{"operationName":"UpdateItems","query":"mutation UpdateItems($items: [Item!]!) { updateItems(items: $items) { id } }","items":[{"kind":"ok","n":1,"label":"alpha"},{"kind":"ok","n":2,"pad":"xxxx"},{"kind":"evil","n":3,"pad":"yyyy","meta":{"a":1}},{"kind":"ok","n":4},{"kind":"ok","n":5}],"variables":{"client":"web","trace":true},"extensions":{"clientLibrary":{"name":"apollo","version":"3.11.0"}},"extra":true}' \
+  --compressed

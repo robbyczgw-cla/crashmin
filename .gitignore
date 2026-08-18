@@ -15,4 +15,5 @@ htmlcov/
 .vscode/
 *.swp
 benchmarks/_last.json
+corpus/_last.json
 examples/killer.curl

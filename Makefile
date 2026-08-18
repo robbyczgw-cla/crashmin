@@ -1,4 +1,4 @@
-.PHONY: test bench demo fixtures
+.PHONY: test bench demo fixtures corpus
 
 PYTHON ?= python3
 
@@ -7,6 +7,9 @@ test:
 
 bench:
 	$(PYTHON) scripts/bench.py
+
+corpus:
+	$(PYTHON) scripts/corpus.py
 
 demo:
 	bash scripts/demo.sh

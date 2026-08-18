@@ -115,7 +115,15 @@ def split_argv(text: str) -> list[str]:
             continue
         if ch == '"':
             i += 1
-            while i < n and text[i] != '"':
+            while i < n:
+                if text[i] == '"' and i + 1 < n and text[i + 1] == '"':
+                    # cmd.exe Copy as cURL: doubled quotes are a literal quote
+                    buf.append('"')
+                    i += 2
+                    continue
+                if text[i] == '"':
+                    i += 1
+                    break
                 if text[i] == "\\" and i + 1 < n:
                     nxt = text[i + 1]
                     if nxt in '$`"\\\n':
@@ -124,8 +132,6 @@ def split_argv(text: str) -> list[str]:
                         i += 2
                         continue
                 buf.append(text[i])
-                i += 1
-            if i < n:
                 i += 1
             continue
         if ch == "\\" and i + 1 < n:

@@ -1,0 +1,4 @@
+curl 'http://127.0.0.1:18765/d' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"widget":{"id":"w-99","color":"red","unused":true},"note":"please ignore","count":4}' \
+  --compressed
