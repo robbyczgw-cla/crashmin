@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crashmin"
+version = "0.1.0"
+description = "Failure-preserving HTTP request reduction"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "CrashMin contributors" }]
+keywords = [
+    "http",
+    "curl",
+    "delta-debugging",
+    "minimization",
+    "reproducer",
+    "oracle",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+crashmin = "crashmin.cli:main"
+crashmin-fixtures = "crashmin.fixtures:main"
+
+[project.urls]
+Homepage = "https://github.com/crashmin/crashmin"
+Documentation = "https://github.com/crashmin/crashmin#readme"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "integration: hits a local fixture HTTP server",
+]

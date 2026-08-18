@@ -1,0 +1,7 @@
+# Tiny illustration (point this at the fixture server).
+curl 'http://127.0.0.1:18765/a?utm_source=devtools&debug=1' \
+  -H 'User-Agent: Mozilla/5.0' \
+  -H 'X-Crash-Token: letmein' \
+  -H 'Accept: application/json' \
+  -H 'Cookie: _ga=GA1.2.1; theme=dark' \
+  --data-raw '{"meta":{"pad":true},"payload":{"deeply":{"nested":{"trigger":"boom","extra":1}}}}'
